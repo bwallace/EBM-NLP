@@ -53,7 +53,7 @@ def lpad(inp, n, min_buf=0):
 class Doc:
   def __init__(self, pmid, phase, element):
     with open(os.path.join(DATA_DIR, 'documents', '%s.text' %pmid)) as fp:
-      self.text = fp.read().decode('utf-8')
+      self.text = fp.read()
     with open(os.path.join(DATA_DIR, 'documents', '%s.tokens' %pmid)) as fp:
       self.tokens = fp.read().split(' ')
     self.pmid = pmid
@@ -88,6 +88,16 @@ def read_anns(phase, element, ann_type = 'aggregated', model_phase = 'train'):
 
   print ('Loaded annotations for %d documents from %d worker %s' % (len(docs), len(workers), 's' if len(workers) != 1 else ''))
   return workers, docs
+
+def get_y(doc):
+  y = []
+  for labels in doc.anns:
+    for l in labels:
+      l = int(l)
+      if l == 8:
+        import pdb; pdb.set_trace()
+      y.append(doc.decoder[l])
+  return y
 
 def print_token_labels(doc, width = 80): 
   t_str = '' 
