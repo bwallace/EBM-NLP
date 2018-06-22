@@ -86,7 +86,7 @@ def read_anns(phase, element, ann_type = 'aggregated', model_phase = 'train'):
     docs[pmid].anns[wid] = labels
     workers[wid].pmids.append(pmid)
 
-  print 'Loaded annotations for %d documents from %d worker%s' %(len(docs), len(workers), 's' if len(workers) != 1 else '')
+  print ('Loaded annotations for %d documents from %d worker %s' % (len(docs), len(workers), 's' if len(workers) != 1 else ''))
   return workers, docs
 
 def print_token_labels(doc, width = 80): 
@@ -100,16 +100,16 @@ def print_token_labels(doc, width = 80):
         l_s = ' '*len(t)
       slen = max(len(t), len(l_s))
       if len(t_str) + slen > width:
-        print t_str
+        print (t_str)
         if any([c != ' ' for c in l_str]):
-          print l_str
-          print
+          print (l_str)
+          print ()
         t_str = '' 
         l_str = '' 
       t_str += ' ' + rpad(t, slen)
       l_str += ' ' + rpad(l_s, slen)
-    print t_str
-    print l_str
+    print (t_str)
+    print (l_str)
 
 def condense_labels(labels):
   groups = [(k, sum(1 for _ in g)) for k,g in groupby(labels)]
@@ -124,10 +124,10 @@ def condense_labels(labels):
 def print_labeled_spans(doc):
   for wid, labels in doc.anns.items():
     label_spans = condense_labels(labels)
-    print 'Label spans for wid = %s' %wid
+    print ('Label spans for wid = %s' %wid)
     for label, token_i, token_f in label_spans:
-      print '[%s]: %s ' %(doc.decoder[label], ' '.join(doc.tokens[token_i:token_f]))
-    print
+      print ('[%s]: %s ' %(doc.decoder[label], ' '.join(doc.tokens[token_i:token_f])))
+    print ()
 
 def compute_worker_kappas(workers, docs):
   wids = sorted(workers.keys())
@@ -151,8 +151,8 @@ def print_matrix(matrix, row_names, title):
   row_names = row_names or ['' for row in matrix]
   title = title or 'Table'
   llen = max(map(len, row_names))
-  print '%s:' %title
-  print '%s  %s' %(lpad('', llen), ' '.join([lpad(n, llen) for n in row_names]))
+  print ('%s:' %title)
+  print ('%s  %s' %(lpad('', llen), ' '.join([lpad(n, llen) for n in row_names])))
   for row,name in zip(matrix, row_names):
-    print '%s: %s' %(lpad(name, llen), ' '.join([lpad(x if type(x) is str else '%.2f' %x, llen) for x in row]))
+    print ('%s: %s' %(lpad(name, llen), ' '.join([lpad(x if type(x) is str else '%.2f' %x, llen) for x in row])))
 
