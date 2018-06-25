@@ -117,8 +117,8 @@ def print_token_labels(doc, width = 80):
         l_str = '' 
       t_str += ' ' + rpad(t, slen)
       l_str += ' ' + rpad(l_s, slen)
-    print l_str
-    print t_str
+    print (l_str)
+    print (t_str)
     
 
 def condense_labels(labels):
