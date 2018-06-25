@@ -111,8 +111,8 @@ def print_token_labels(doc, width = 80):
       slen = max(len(t), len(l_s))
       if len(t_str) + slen > width:
         if any([c != ' ' for c in l_str]):
-          print l_str
-        print t_str
+          print (l_str)
+        print (t_str)
         t_str = '' 
         l_str = '' 
       t_str += ' ' + rpad(t, slen)
