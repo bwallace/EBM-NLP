@@ -38,7 +38,9 @@ class LSTMTagger(nn.Module):
         # The axes semantics are (num_layers, minibatch_size, hidden_dim)
         hidden = (torch.zeros(1, 1, self.hidden_dim),
                 torch.zeros(1, 1, self.hidden_dim))
-        if USE_CUDA: hidden = hidden.cuda()
+        if USE_CUDA: 
+            hidden = (torch.zeros(1, 1, self.hidden_dim).cuda(),
+                torch.zeros(1, 1, self.hidden_dim),cuda())
         return hidden 
 
     def forward(self, sentence):
