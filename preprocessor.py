@@ -40,20 +40,24 @@ def print_spans(tokens, y):
 
 
 
+def maps_to_dicts(doc_map):
+    docs, ys = {}, {}
+    for pmid, doc in doc_map.items():
+        ys[pmid] = list(doc.anns['AGGREGATED'])
+        docs[pmid] = [t.lower() for t in doc.tokens]
+    return docs, ys 
+
 def get_vectorizer(anno_type='starting_spans', label_set='participants', return_data_too=False):
     
     worker_map, doc_map = e.read_anns(anno_type, label_set, \
                                         ann_type = 'aggregated', model_phase = 'train')
 
-
-    docs, ys = {}, {}
-    for pmid, doc in doc_map.items():
-        ys[pmid] = list(doc.anns['AGGREGATED'])
-        docs[pmid] = [t.lower() for t in doc.tokens]
+    docs, ys = maps_to_dicts(doc_map)
 
     # for purposes of vectorization, put all text 
     all_text = sum(docs.values(), [])
     
+
     vectorizer = CountVectorizer(max_features=20000)
     vectorizer.fit(all_text)
     tokenizer = vectorizer.build_tokenizer() 
@@ -90,7 +94,7 @@ class SimpleVectorizer:
             tokenized = self.tokenizer(s)
         else:
             tokenized = s 
-            
+
         vectorized = []
         for token in tokenized:
             idx = self.str_to_idx["<unk>"]
