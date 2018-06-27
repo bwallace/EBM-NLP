@@ -40,12 +40,23 @@ def print_spans(tokens, y):
 
 
 
+def load_test_data(anno_type='starting_spans', label_set='participants'):
+    worker_map, doc_map = e.read_anns(anno_type, label_set, ann_type='aggregated', model_phase='test/gold')
+    return maps_to_dicts(doc_map)
+
 def maps_to_dicts(doc_map):
     docs, ys = {}, {}
     for pmid, doc in doc_map.items():
         ys[pmid] = list(doc.anns['AGGREGATED'])
         docs[pmid] = [t.lower() for t in doc.tokens]
     return docs, ys 
+
+def dicts_to_X_y(docs, ys, v):
+    X, y = [], []
+    for id_ in docs:
+        X.append(v.string_to_seq(docs[id_]))
+        y.append(_to_torch_var(ys[id_]))
+    return X, y
 
 def get_vectorizer(anno_type='starting_spans', label_set='participants', return_data_too=False):
     

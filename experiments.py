@@ -53,7 +53,6 @@ def train(HIDDEN_DIM=32, OUTPUT_SIZE=2, epochs=10):
     # (802 because we have 4802 right now in total)
     val_ids = random.sample(Xs.keys(), 802)
     train_ids = [id_ for id_ in Xs if not id_ in val_ids]
-
     val_X, val_y = [], []
     for val_id in val_ids:
         val_X.append(v.string_to_seq(Xs[val_id]))
@@ -109,8 +108,30 @@ def train(HIDDEN_DIM=32, OUTPUT_SIZE=2, epochs=10):
             print("epoch {}. train loss: {}; val loss: {}; val F1: {:.3f}".format(
                     epoch, epoch_loss.data[0], val_loss.data[0], f1))
 
+    return model, v
 
 
+def test(m, v):
+    test_docs, test_labels = preprocessor.load_test_data()
+    test_X, test_y = preprocessor.dicts_to_X_y(test_docs, test_labels, v)
+    
+    y_hat, y_hat_hard, y_test_flat = [], [], []
+    for i in range(len(test_X)):
+        y_hat_i = m(test_X[i])
+        y_hat.extend(y_hat_i)
+        y_hat_hard.extend([int(np.argmax(y_hat_i[x].data)) for x in range(len(y_hat_i))])
+        y_test_flat.extend(test_y[i])
 
-    return model
+    
+    f1 = f1_score(y_test_flat, y_hat_hard)
+    return f1, y_test_flat, y_hat_hard
+   
+
+def test_exp(epochs=10):
+    print("!!!WARNING!!! this is using the test data for evaluation -- use sparingly!!")
+    m, v = train(epochs=epochs)
+    f1, y_test, y_hat = test(m, v)
+    print(f1)
+
+
 
