@@ -69,6 +69,8 @@ def train(HIDDEN_DIM=32, OUTPUT_SIZE=2, epochs=10):
 
     for epoch in range(epochs):  
         epoch_loss = 0
+        # shuffle the examples
+        np.random.shuffle(train_ids)
         if epoch > 0:
             for train_id in train_ids:
                 x_i, y_i = Xs[train_id], ys[train_id]
