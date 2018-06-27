@@ -7,7 +7,7 @@ import torch.optim as optim
 
 import numpy as np 
 
-from sklearn.metrics import f1_score
+from sklearn.metrics import accuracy_score, f1_score, classification_report
 
 import gensim 
 from gensim.models import KeyedVectors
