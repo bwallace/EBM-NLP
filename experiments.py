@@ -124,6 +124,7 @@ def test(m, v):
 
     
     f1 = f1_score(y_test_flat, y_hat_hard)
+
     return f1, y_test_flat, y_hat_hard
    
 
@@ -131,7 +132,14 @@ def test_exp(epochs=10):
     print("!!!WARNING!!! this is using the test data for evaluation -- use sparingly!!")
     m, v = train(epochs=epochs)
     f1, y_test, y_hat = test(m, v)
+
+    print("f1")
     print(f1)
+
+    print ('\n clasification report:\n')
+    print(classification_report(y_test, y_hat))
+
+
 
 
 
