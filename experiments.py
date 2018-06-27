@@ -122,7 +122,7 @@ def test(m, v):
         y_hat_i = m(test_X[i])
         y_hat.extend(y_hat_i)
         y_hat_hard.extend([int(np.argmax(y_hat_i[x].data)) for x in range(len(y_hat_i))])
-        y_test_flat.extend(test_y[i])
+        y_test_flat.extend(int(test_y[i]))
 
     
     f1 = f1_score(y_test_flat, y_hat_hard)
@@ -138,7 +138,9 @@ def test_exp(epochs=10):
     print("f1")
     print(f1)
 
+
     print ('\n clasification report:\n')
+
     print(classification_report(y_test, y_hat))
 
 
