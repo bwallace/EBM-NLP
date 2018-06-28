@@ -25,7 +25,7 @@ class LSTMTagger(nn.Module):
 
         # The LSTM takes word embeddings as inputs, and outputs hidden states
         # with dimensionality hidden_dim.
-        self.lstm = nn.LSTM(embedding_dim, hidden_dim)
+        self.lstm = nn.LSTM(embedding_dim, hidden_dim, bidirectional=True)
 
         # The linear layer that maps from hidden state space to tag space
         self.hidden2tag = nn.Linear(hidden_dim, tagset_size)
@@ -45,9 +45,12 @@ class LSTMTagger(nn.Module):
 
     def forward(self, sentence):
         embeds = self.word_embeddings(sentence)
+        ## Q: why would we want to initialize tagger with
+        # the current hidden???
         lstm_out, self.hidden = self.lstm(
-            embeds.view(len(sentence), 1, -1), self.hidden)
+            embeds.view(len(sentence), 1, -1))#, self.hidden)
         tag_space = self.hidden2tag(lstm_out.view(len(sentence), -1))
+        #import pdb; pdb.set_trace()
         tag_scores = F.log_softmax(tag_space, dim=1)
         return tag_scores
 
