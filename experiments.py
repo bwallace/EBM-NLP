@@ -111,7 +111,7 @@ def train(HIDDEN_DIM=32, OUTPUT_SIZE=2, epochs=10, use_val=True):
                 #import pdb; pdb.set_trace()
                 print("epoch {}. train loss: {}; val loss: {}; val F1: {:.3f}".format(
                         epoch, epoch_loss.data[0], val_loss.data[0], f1))
-        else:
+        elif epoch > 0:
             print("epoch {}. train loss: {}: {:.3f}".format(epoch, epoch_loss.data[0]))
 
     return model, v
