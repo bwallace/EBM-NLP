@@ -92,24 +92,27 @@ def train(HIDDEN_DIM=32, OUTPUT_SIZE=2, epochs=10, use_val=True):
                 optimizer.step()
 
         #import pdb; pdb.set_trace()
-        y_hat_val, y_hat_hard, y_val_flat, val_losses = [], [], [], []
-        for i in range(len(val_X)):
-            y_hat_i = model(val_X[i])
-            y_hat_val.append(y_hat_i)
-            val_losses.append(loss_function(y_hat_i, val_y[i]))
+        if use_val:
+            y_hat_val, y_hat_hard, y_val_flat, val_losses = [], [], [], []
+            for i in range(len(val_X)):
+                y_hat_i = model(val_X[i])
+                y_hat_val.append(y_hat_i)
+                val_losses.append(loss_function(y_hat_i, val_y[i]))
 
-            y_hat_hard.extend([int(np.argmax(y_hat_i[x].data)) for x in range(len(y_hat_i))])
-            y_val_flat.extend(val_y[i])
+                y_hat_hard.extend([int(np.argmax(y_hat_i[x].data)) for x in range(len(y_hat_i))])
+                y_val_flat.extend(val_y[i])
 
-        val_loss = sum(val_losses)
-        f1 = f1_score(y_val_flat, y_hat_hard)
-        #import pdb; pdb.set_trace()
-        if epoch == 0:
-            print("initial f1 = {}".format(f1))
-        else:
+            val_loss = sum(val_losses)
+            f1 = f1_score(y_val_flat, y_hat_hard)
             #import pdb; pdb.set_trace()
-            print("epoch {}. train loss: {}; val loss: {}; val F1: {:.3f}".format(
-                    epoch, epoch_loss.data[0], val_loss.data[0], f1))
+            if epoch == 0:
+                print("initial f1 = {}".format(f1))
+            else:
+                #import pdb; pdb.set_trace()
+                print("epoch {}. train loss: {}; val loss: {}; val F1: {:.3f}".format(
+                        epoch, epoch_loss.data[0], val_loss.data[0], f1))
+        else:
+            print("epoch {}. train loss: {}: {:.3f}".format(epoch, epoch_loss.data[0]))
 
     return model, v
 
