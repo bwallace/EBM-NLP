@@ -112,7 +112,7 @@ def train(HIDDEN_DIM=32, OUTPUT_SIZE=2, epochs=10, use_val=True):
                 print("epoch {}. train loss: {}; val loss: {}; val F1: {:.3f}".format(
                         epoch, epoch_loss.data[0], val_loss.data[0], f1))
         elif epoch > 0:
-            print("epoch {}. train loss: {}: {:.3f}".format(epoch, epoch_loss.data[0]))
+            print("epoch {}. train loss: {}".format(epoch, epoch_loss.data[0]))
 
     return model, v
 
