@@ -43,29 +43,30 @@ def to_int_preds(y):
     return [np.argmax(y_i) for y_i in y]
 
 
-def train(HIDDEN_DIM=32, OUTPUT_SIZE=2, epochs=10):
+def train(HIDDEN_DIM=32, OUTPUT_SIZE=2, epochs=10, use_val=True):
     v, (Xs, ys) = preprocessor.get_vectorizer(return_data_too=True)
 
     
     E = load_init_word_vectors(v)
     EMBEDDING_DIM = E.shape[1]
 
-    # (802 because we have 4802 right now in total)
-    val_ids = random.sample(Xs.keys(), 802)
-    train_ids = [id_ for id_ in Xs if not id_ in val_ids]
-    val_X, val_y = [], []
-    for val_id in val_ids:
-        val_X.append(v.string_to_seq(Xs[val_id]))
-        val_y.append(preprocessor._to_torch_var(ys[val_id]))
+    val_ids = []
+    if use_val:
+        # (802 because we have 4802 right now in total)
+        val_ids = random.sample(Xs.keys(), 802)
+        val_X, val_y = [], []
+        for val_id in val_ids:
+            val_X.append(v.string_to_seq(Xs[val_id]))
+            val_y.append(preprocessor._to_torch_var(ys[val_id]))
 
+
+    train_ids = [id_ for id_ in Xs if not id_ in val_ids]
 
     model = LSTMTagger(EMBEDDING_DIM, HIDDEN_DIM, len(v.str_to_idx), OUTPUT_SIZE)
     if USE_CUDA:
         model.cuda()
-
-
     loss_function = nn.CrossEntropyLoss()  
-    optimizer = optim.SGD(model.parameters(), lr=0.1)
+    optimizer = optim.SGD(model.parameters(), lr=0.01)
 
     for epoch in range(epochs):  
         epoch_loss = 0
