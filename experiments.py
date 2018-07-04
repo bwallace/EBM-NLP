@@ -4,6 +4,7 @@ import torch
 import torch.autograd as autograd
 import torch.nn as nn
 import torch.optim as optim
+from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 
 import numpy as np 
 
@@ -15,8 +16,8 @@ from gensim.models import KeyedVectors
 from seq_tagger_models import LSTMTagger
 import preprocessor 
 
-
 USE_CUDA = False 
+
 
 def load_init_word_vectors(vectorizer, path_to_wvs=None):
     WVs = KeyedVectors.load_word2vec_format("embeddings/PubMed-w2v.bin", binary=True)
@@ -43,7 +44,8 @@ def to_int_preds(y):
     return [np.argmax(y_i) for y_i in y]
 
 
-def train(HIDDEN_DIM=32, OUTPUT_SIZE=2, epochs=10, use_val=True):
+
+def train(HIDDEN_DIM=32, OUTPUT_SIZE=2, epochs=10, use_val=True, dropout=0.2):
     v, (Xs, ys) = preprocessor.get_vectorizer(return_data_too=True)
 
     
@@ -72,6 +74,8 @@ def train(HIDDEN_DIM=32, OUTPUT_SIZE=2, epochs=10, use_val=True):
         epoch_loss = 0
         # shuffle the examples
         np.random.shuffle(train_ids)
+        
+        '''
         if epoch > 0:
             for train_id in train_ids:
                 x_i, y_i = Xs[train_id], ys[train_id]
@@ -90,6 +94,7 @@ def train(HIDDEN_DIM=32, OUTPUT_SIZE=2, epochs=10, use_val=True):
                 epoch_loss += loss 
                 loss.backward()
                 optimizer.step()
+        '''
 
         #import pdb; pdb.set_trace()
         if use_val:
@@ -134,9 +139,9 @@ def test(m, v):
     return f1, y_test_flat, y_hat_hard
    
 
-def test_exp(epochs=10):
+def test_exp(epochs=10, dropout=0.2):
     print("!!!WARNING!!! this is using the test data for evaluation -- use sparingly!!")
-    m, v = train(epochs=epochs)
+    m, v = train(epochs=epochs, use_val=False, dropout=dropout)
     f1, y_test, y_hat = test(m, v)
 
     print("f1")
