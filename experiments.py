@@ -64,18 +64,19 @@ def train(HIDDEN_DIM=32, OUTPUT_SIZE=2, epochs=10, use_val=True, dropout=0.2):
 
     train_ids = [id_ for id_ in Xs if not id_ in val_ids]
 
-    model = LSTMTagger(EMBEDDING_DIM, HIDDEN_DIM, len(v.str_to_idx), OUTPUT_SIZE)
+    model = LSTMTagger(EMBEDDING_DIM, HIDDEN_DIM, len(v.str_to_idx), OUTPUT_SIZE, dropout)
     if USE_CUDA:
         model.cuda()
+
     loss_function = nn.CrossEntropyLoss()  
-    optimizer = optim.SGD(model.parameters(), lr=0.01)
+    optimizer = optim.Adam(model.parameters()) # optim.SGD(model.parameters(), lr=0.01)
 
     for epoch in range(epochs):  
         epoch_loss = 0
         # shuffle the examples
         np.random.shuffle(train_ids)
         
-        '''
+        
         if epoch > 0:
             for train_id in train_ids:
                 x_i, y_i = Xs[train_id], ys[train_id]
@@ -94,7 +95,7 @@ def train(HIDDEN_DIM=32, OUTPUT_SIZE=2, epochs=10, use_val=True, dropout=0.2):
                 epoch_loss += loss 
                 loss.backward()
                 optimizer.step()
-        '''
+       
 
         #import pdb; pdb.set_trace()
         if use_val:
