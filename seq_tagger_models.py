@@ -17,30 +17,30 @@ def _to_torch_var(x):
 
 class LSTMTagger(nn.Module):
 
-    def __init__(self, embedding_dim, hidden_dim, vocab_size, tagset_size):
+    def __init__(self, embedding_dim, hidden_dim, vocab_size, tagset_size, dropout=0.2):
         super(LSTMTagger, self).__init__()
         self.hidden_dim = hidden_dim
 
         self.word_embeddings = nn.Embedding(vocab_size, embedding_dim)
 
-        # The LSTM takes word embeddings as inputs, and outputs hidden states
-        # with dimensionality hidden_dim.
+
         self.lstm = nn.LSTM(embedding_dim, hidden_dim // 2, bidirectional=True)
 
         # The linear layer that maps from hidden state space to tag space
+        self.dropout = nn.Dropout(dropout)
         self.hidden2tag = nn.Linear(hidden_dim, tagset_size)
         self.hidden = self.init_hidden()
 
     def init_hidden(self):
-        # Before we've done anything, we dont have any hidden state.
-        # Refer to the Pytorch documentation to see exactly
-        # why they have this dimensionality.
-        # The axes semantics are (num_layers, minibatch_size, hidden_dim)
-        hidden = (torch.zeros(1, 1, self.hidden_dim),
-                torch.zeros(1, 1, self.hidden_dim))
+        # the axes semantics are (num_layers, minibatch_size, hidden_dim)
+        h = torch.zeros(1, 1, self.hidden_dim)
+        c = torch.zeros(1, 1, self.hidden_dim)
+
+        hidden = (h, c)
+    
         if USE_CUDA: 
-            hidden = (torch.zeros(1, 1, self.hidden_dim).cuda(),
-                torch.zeros(1, 1, self.hidden_dim).cuda())
+            hidden = (hidden[0].cuda(), hidden[1].cuda())
+
         return hidden 
 
     def forward(self, sentence):
@@ -49,12 +49,10 @@ class LSTMTagger(nn.Module):
         # the current hidden???
         lstm_out, self.hidden = self.lstm(
             embeds.view(len(sentence), 1, -1))#, self.hidden)
-        tag_space = self.hidden2tag(lstm_out.view(len(sentence), -1))
-        #import pdb; pdb.set_trace()
+
+        tag_space = self.hidden2tag(self.dropout(lstm_out.view(len(sentence), -1)))
         tag_scores = F.log_softmax(tag_space, dim=1)
         return tag_scores
-
-
 
 
 
