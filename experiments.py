@@ -135,6 +135,8 @@ def test(m, v):
     test_docs, test_labels = preprocessor.load_test_data()
     test_X, test_y = preprocessor.dicts_to_X_y(test_docs, test_labels, v)
     
+    import pdb ; pdb.set_trace()
+    
     y_hat, y_hat_hard, y_test_flat = [], [], []
     for i in range(len(test_X)):
 
