@@ -28,6 +28,8 @@ class LSTMTagger(nn.Module):
 
         # The linear layer that maps from hidden state space to tag space
         self.dropout = nn.Dropout(dropout)
+        self.dropout_embeds = nn.Dropout(dropout)
+
         self.hidden2tag = nn.Linear(hidden_dim, tagset_size)
         self.hidden = self.init_hidden()
 
@@ -45,6 +47,9 @@ class LSTMTagger(nn.Module):
 
     def forward(self, sentence):
         embeds = self.word_embeddings(sentence)
+
+        embeds = self.dropout_embeds(embeds)
+
         ## Q: why would we want to initialize tagger with
         # the current hidden???
         lstm_out, self.hidden = self.lstm(
@@ -55,6 +60,17 @@ class LSTMTagger(nn.Module):
         return tag_scores
 
 
+    def forward_sample(self, sentence, n=100):
+        samples = []
+        for _ in range(n):
+            embeds = self.word_embeddings(sentence)
+            embeds = self.dropout_embeds(embeds)
+            lstm_out, h = self.lstm(
+                embeds.view(len(sentence), 1, -1))#, self.hidden)
+            samples.append(h[0])
+
+        import pdb; pdb.set_trace()
+        return samples 
 
 '''
 cribbed mostly from: https://pytorch.org/tutorials/beginner/nlp/advanced_tutorial.html

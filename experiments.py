@@ -129,7 +129,14 @@ def test(m, v):
     
     y_hat, y_hat_hard, y_test_flat = [], [], []
     for i in range(len(test_X)):
+
+        samples = m.forward_sample(test_X[i])
+
+        print("yay!")
+        import pdb; pdb.set_trace()
+        
         y_hat_i = m(test_X[i])
+
         y_hat.extend(y_hat_i)
         y_hat_hard.extend([int(np.argmax(y_hat_i[x].data)) for x in range(len(y_hat_i))])
         y_test_flat.extend([int(y_ij) for y_ij in test_y[i]])
