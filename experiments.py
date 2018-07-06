@@ -44,6 +44,14 @@ def to_int_preds(y):
     return [np.argmax(y_i) for y_i in y]
 
 
+def score_examples(m, U, k=1):
+    var_norms = []
+    for i in range(len(U)):
+
+        means, stds = m.means_and_stds(U[i])
+        var_norms.append(stds.norm())
+
+    return var_norms
 
 def train(HIDDEN_DIM=32, OUTPUT_SIZE=2, epochs=10, use_val=True, dropout=0.2):
     v, (Xs, ys) = preprocessor.get_vectorizer(return_data_too=True)
@@ -130,11 +138,11 @@ def test(m, v):
     y_hat, y_hat_hard, y_test_flat = [], [], []
     for i in range(len(test_X)):
 
-        samples = m.forward_sample(test_X[i])
+        #samples = m.forward_sample(test_X[i])
 
-        print("yay!")
-        import pdb; pdb.set_trace()
-        
+        #print("yay!")
+        #import pdb; pdb.set_trace()
+
         y_hat_i = m(test_X[i])
 
         y_hat.extend(y_hat_i)

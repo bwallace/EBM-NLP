@@ -73,7 +73,7 @@ class LSTMTagger(nn.Module):
 
         return samples 
 
-    def means_and_vars(self, sentence, n=100):
+    def means_and_stds(self, sentence, n=100):
         samples = self.forward_sample(sentence, n=n)
         samples = torch.stack(samples)
         means, stds = torch.mean(samples, 0), torch.std(samples, 0)
