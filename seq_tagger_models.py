@@ -50,8 +50,6 @@ class LSTMTagger(nn.Module):
 
         embeds = self.dropout_embeds(embeds)
 
-        ## Q: why would we want to initialize tagger with
-        # the current hidden???
         lstm_out, self.hidden = self.lstm(
             embeds.view(len(sentence), 1, -1))#, self.hidden)
 
@@ -67,7 +65,11 @@ class LSTMTagger(nn.Module):
             embeds = self.dropout_embeds(embeds)
             lstm_out, h = self.lstm(
                 embeds.view(len(sentence), 1, -1))#, self.hidden)
-            samples.append(h[0])
+
+            h = h[0] # drop context vector
+            # concatenate --> <-- state vectors
+            h_concat = torch.cat([h[0][0], h[1][0]])
+            samples.append(h_concat)
 
         import pdb; pdb.set_trace()
         return samples 
