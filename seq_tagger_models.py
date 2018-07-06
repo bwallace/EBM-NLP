@@ -71,8 +71,13 @@ class LSTMTagger(nn.Module):
             h_concat = torch.cat([h[0][0], h[1][0]])
             samples.append(h_concat)
 
-        import pdb; pdb.set_trace()
         return samples 
+
+    def means_and_vars(self, sentence, n=100):
+        samples = self.forward_sample(sentence, n=n)
+        samples = torch.stack(samples)
+        means, stds = torch.mean(samples, 0), torch.std(samples, 0)
+        return means, stds 
 
 '''
 cribbed mostly from: https://pytorch.org/tutorials/beginner/nlp/advanced_tutorial.html
