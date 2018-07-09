@@ -69,14 +69,16 @@ class LSTMTagger(nn.Module):
             h = h[0] # drop context vector
             # concatenate --> <-- state vectors
             h_concat = torch.cat([h[0][0], h[1][0]])
-            samples.append(h_concat)
+            
+            #samples.append(h_concat)
+            samples.append(h_concat.data.cpu().numpy())
 
         return samples 
 
     def means_and_stds(self, sentence, n=100):
         samples = self.forward_sample(sentence, n=n)
-        samples = torch.stack(samples)
-        means, stds = torch.mean(samples, 0), torch.std(samples, 0)
+        samples = np.stack(samples)
+        means, stds = np.mean(samples, 0), np.std(samples, 0)
         return means, stds 
 
 '''
