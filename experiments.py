@@ -49,7 +49,7 @@ def score_examples(m, U, k=1):
     for i in range(len(U)):
 
         means, stds = m.means_and_stds(U[i])
-        var_norms.append(stds.norm())
+        var_norms.append(np.linalg.norm(stds))
 
     return var_norms
 
